@@ -44,7 +44,7 @@ func resourceHerokuAddon() *schema.Resource {
 			"config": {
 				Type:     schema.TypeList,
 				Optional: true,
-				ForceNew: true,
+				// ForceNew: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
 				},

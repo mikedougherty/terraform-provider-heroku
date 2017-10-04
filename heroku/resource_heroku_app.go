@@ -198,18 +198,9 @@ func isOrganizationApp(d *schema.ResourceData) bool {
 }
 
 func resourceHerokuAppImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	client := m.(*heroku.Service)
-
-	app, err := client.AppInfo(context.TODO(), d.Id())
+	err := resourceHerokuAppRead(d, m)
 	if err != nil {
 		return nil, err
-	}
-
-	// Flag organization apps by setting the organization name
-	if app.Organization != nil {
-		d.Set("organization", []map[string]interface{}{
-			{"name": app.Organization.Name},
-		})
 	}
 
 	return []*schema.ResourceData{d}, nil

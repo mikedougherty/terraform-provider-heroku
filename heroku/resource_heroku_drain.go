@@ -18,6 +18,10 @@ func resourceHerokuDrain() *schema.Resource {
 		Read:   resourceHerokuDrainRead,
 		Delete: resourceHerokuDrainDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: resourceHerokuDrainImportState,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"url": {
 				Type:     schema.TypeString,
@@ -99,4 +103,19 @@ func resourceHerokuDrainRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("token", dr.Token)
 
 	return nil
+}
+
+func resourceHerokuDrainImportState(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// First query the space group
+	idParts := strings.SplitN(d.Id(), ":", 2)
+	herokuAppID, herokuDrainID := idParts[0], idParts[1]
+
+	d.SetId(herokuDrainID)
+	d.Set("app", herokuAppID)
+	err := resourceHerokuDrainRead(d, meta)
+	if err != nil {
+		return nil, err
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
